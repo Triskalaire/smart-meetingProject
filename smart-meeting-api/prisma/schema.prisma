@@ -1,3 +1,5 @@
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,33 +10,33 @@ datasource db {
 }
 
 model User {
-  id       String   @id @default(uuid())
-  email    String   @unique
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
   password String
   role     Role
   bookings Booking[]
 }
 
 model Room {
-  id       String   @id @default(uuid())
+  id       Int       @id @default(autoincrement())
   name     String
   capacity Int
-  features String[]
+  features Json
   rules    Json
   bookings Booking[]
 }
 
 model Booking {
-  id     String   @id @default(uuid())
+  id     Int      @id @default(autoincrement())
   start  DateTime
   end    DateTime
   user   User     @relation(fields: [userId], references: [id])
-  userId String
+  userId Int
   room   Room     @relation(fields: [roomId], references: [id])
-  roomId String
+  roomId Int
 }
 
 enum Role {
-  employee
-  admin
+  ADMIN
+  EMPLOYEE
 }
