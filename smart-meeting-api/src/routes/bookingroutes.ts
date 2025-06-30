@@ -1,11 +1,18 @@
 import express from 'express';
-import { getBookings, createBooking } from '../controllers/bookingcontroller';
-import { authenticateToken } from '../middleware/authmiddleware';
-import { checkBookingConstraints } from '../middleware/rulesmiddleware';
+import {
+  getBookings,
+  createBooking
+} from '../controllers/bookingcontrollers';
+
+import { isAuthenticated } from '../middleware/authmiddleware';
+import { checkBookingValidity } from '../middleware/rulesmiddleware';
 
 const router = express.Router();
 
-router.get('/', authenticateToken, getBookings);
-router.post('/', authenticateToken, checkBookingConstraints, createBooking);
+// GET /bookings – Réservations de l'utilisateur (admin = toutes)
+router.get('/', isAuthenticated, getBookings);
+
+// POST /bookings – Créer une réservation
+router.post('/', isAuthenticated, checkBookingValidity, createBooking);
 
 export default router;

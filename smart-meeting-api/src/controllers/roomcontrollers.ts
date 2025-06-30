@@ -8,12 +8,12 @@ export const getRooms = async (_req: Request, res: Response) => {
     res.json(rooms);
 };
 
-export const getRoomById = async (req: Request, res: Response) => {
+export const getRoomById = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const room = await prisma.room.findUnique({
         where: { id: parseInt(id) },
     });
-    if (!room) return res.status(404).json({ message: "Room not found" });
+    if (!room) res.status(404).json({ message: "Room not found" });
     res.json(room);
 };
 

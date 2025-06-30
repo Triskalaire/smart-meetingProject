@@ -4,11 +4,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const checkBookingValidity = async (req: Request, res: Response, next: NextFunction) => {
+export const checkBookingValidity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { roomId, start, end } = req.body;
 
     const room = await prisma.room.findUnique({ where: { id: roomId } });
-    if (!room) return res.status(404).json({ message: "Room not found" });
+    if (!room) res.status(404).json({ message: "Room not found" });
 
     const rules = room.rules as any || {};
     const startTime = new Date(start);
@@ -19,7 +19,7 @@ export const checkBookingValidity = async (req: Request, res: Response, next: Ne
     if (rules.allowWeekends === false) {
         const isWeekend = [0, 6].includes(startTime.getDay()) || [0, 6].includes(endTime.getDay());
         if (isWeekend) {
-            return res.status(400).json({ message: "La salle n'autorise pas les réservations le week-end." });
+            res.status(400).json({ message: "La salle n'autorise pas les réservations le week-end." });
         }
     }
 
@@ -27,7 +27,7 @@ export const checkBookingValidity = async (req: Request, res: Response, next: Ne
     if (rules.maxDurationMinutes) {
         const duration = (endTime.getTime() - startTime.getTime()) / (1000 * 60);
         if (duration > rules.maxDurationMinutes) {
-            return res.status(400).json({ message: `Durée max autorisée : ${rules.maxDurationMinutes} minutes.` });
+            res.status(400).json({ message: `Durée max autorisée : ${rules.maxDurationMinutes} minutes.` });
         }
     }
 
@@ -35,7 +35,7 @@ export const checkBookingValidity = async (req: Request, res: Response, next: Ne
     if (rules.minAdvanceHours) {
         const advance = (startTime.getTime() - now.getTime()) / (1000 * 60 * 60);
         if (advance < rules.minAdvanceHours) {
-            return res.status(400).json({ message: `Réservation requise au moins ${rules.minAdvanceHours}h à l'avance.` });
+            res.status(400).json({ message: `Réservation requise au moins ${rules.minAdvanceHours}h à l'avance.` });
         }
     }
 
@@ -53,7 +53,7 @@ export const checkBookingValidity = async (req: Request, res: Response, next: Ne
     });
 
     if (overlapping) {
-        return res.status(409).json({ message: "Il y a déjà une réservation pour ce créneau." });
+        res.status(409).json({ message: "Il y a déjà une réservation pour ce créneau." });
     }
 
     next();

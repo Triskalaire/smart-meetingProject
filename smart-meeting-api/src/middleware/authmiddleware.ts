@@ -5,10 +5,11 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
+export const isAuthenticated = (req: Request, res: Response, next: NextFunction): void => {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith("Bearer ")) {
-        return res.status(401).json({ message: "Unauthorized: No token provided" });
+        res.status(401).json({ message: "Unauthorized: No token provided" });
+        return
     }
 
     const token = authHeader.split(" ")[1];
@@ -22,13 +23,15 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
         req.user = { userId: decoded.userId, role: decoded.role };
         next();
     } catch (err) {
-        return res.status(401).json({ message: "Unauthorized: Invalid token" });
+        res.status(401).json({ message: "Unauthorized: Invalid token" });
+        return
     }
 };
 
-export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+export const isAdmin = (req: Request, res: Response, next: NextFunction): void => {
     if (req.user?.role !== "ADMIN") {
-        return res.status(403).json({ message: "Forbidden: Admins only" });
+        res.status(403).json({ message: "Forbidden: Admins only" });
+        return
     }
     next();
 };
