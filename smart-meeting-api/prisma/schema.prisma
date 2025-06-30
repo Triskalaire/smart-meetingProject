@@ -37,6 +37,6 @@ model Booking {
 }
 
 enum Role {
-  ADMIN
-  EMPLOYEE
+  admin
+  employee
 }
