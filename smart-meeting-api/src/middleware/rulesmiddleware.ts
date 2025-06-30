@@ -8,7 +8,9 @@ export const checkBookingValidity = async (req: Request, res: Response, next: Ne
     const { roomId, start, end } = req.body;
 
     const room = await prisma.room.findUnique({ where: { id: roomId } });
-    if (!room) res.status(404).json({ message: "Room not found" });
+    if (room == null || room == undefined) { res.status(404).json({ message: "Room not found" });
+        return;
+    }
 
     const rules = room.rules as any || {};
     const startTime = new Date(start);

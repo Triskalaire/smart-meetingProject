@@ -16,7 +16,7 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-            userId: number;
+            userId: string;
             role: string;
         };
 
@@ -29,7 +29,7 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
 };
 
 export const isAdmin = (req: Request, res: Response, next: NextFunction): void => {
-    if (req.user?.role !== "ADMIN") {
+    if (req.user?.role !== "admin") {
         res.status(403).json({ message: "Forbidden: Admins only" });
         return
     }

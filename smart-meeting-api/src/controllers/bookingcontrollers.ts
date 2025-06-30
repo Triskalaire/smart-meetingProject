@@ -13,7 +13,6 @@ export const getBookings = async (req: Request, res: Response): Promise<void> =>
     const role = req.user.role;
 
     const bookings = await prisma.booking.findMany({
-        where: role === "admin" ? {} : { userId },
         include: { room: true },
     });
 
